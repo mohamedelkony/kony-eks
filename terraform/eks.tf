@@ -88,7 +88,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     default = {
-      instance_types           = ["t3.large"]
+      instance_types           = ["t3.small"]
       force_update_version     = true
       release_version          = var.ami_release_version
       use_name_prefix          = false
@@ -97,7 +97,7 @@ module "eks" {
 
       min_size     = 2
       max_size     = 4
-      desired_size = 2
+      desired_size = 4
 
       update_config = {
         max_unavailable_percentage = 50

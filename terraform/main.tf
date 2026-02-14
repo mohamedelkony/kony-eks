@@ -1,6 +1,6 @@
 locals {
   tags = {
-    created-by = "eks-workshop-v2"
+    created-by = "elkony"
     env        = var.cluster_name
   }
 }
