@@ -33,3 +33,21 @@ variable "remote_pod_cidr" {
   type        = string
   default     = "10.53.0.0/16"
 }
+
+variable "aws_load_balancer_controller_namespace" {
+  description = "Namespace for AWS Load Balancer Controller"
+  type        = string
+  default     = "kube-system"
+}
+
+variable "aws_load_balancer_controller_service_account_name" {
+  description = "Service account name for AWS Load Balancer Controller"
+  type        = string
+  default     = "aws-load-balancer-controller"
+}
+
+variable "aws_load_balancer_controller_chart_version" {
+  description = "Helm chart version for AWS Load Balancer Controller"
+  type        = string
+  default     = "1.11.0"
+}
