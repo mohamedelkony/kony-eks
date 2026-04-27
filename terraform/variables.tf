@@ -51,3 +51,62 @@ variable "aws_load_balancer_controller_chart_version" {
   type        = string
   default     = "1.11.0"
 }
+
+variable "cluster_autoscaler_namespace" {
+  description = "Namespace for Cluster Autoscaler"
+  type        = string
+  default     = "kube-system"
+}
+
+variable "cluster_autoscaler_service_account_name" {
+  description = "Service account name for Cluster Autoscaler"
+  type        = string
+  default     = "cluster-autoscaler"
+}
+
+variable "cluster_autoscaler_chart_version" {
+  description = "Helm chart version for Cluster Autoscaler"
+  type        = string
+  default     = "9.57.0"
+}
+
+variable "cluster_autoscaler_image_tag" {
+  description = "Container image tag for Cluster Autoscaler"
+  type        = string
+  default     = "v1.33.3"
+}
+
+variable "external_dns_enabled" {
+  description = "Whether to deploy ExternalDNS"
+  type        = bool
+  default     = false
+}
+
+variable "external_dns_namespace" {
+  description = "Namespace for ExternalDNS"
+  type        = string
+  default     = "kube-system"
+}
+
+variable "external_dns_service_account_name" {
+  description = "Service account name for ExternalDNS"
+  type        = string
+  default     = "external-dns"
+}
+
+variable "external_dns_chart_version" {
+  description = "Helm chart version for ExternalDNS"
+  type        = string
+  default     = "1.20.0"
+}
+
+variable "external_dns_hosted_zone_ids" {
+  description = "Route53 hosted zone IDs managed by ExternalDNS"
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = !var.external_dns_enabled || length(var.external_dns_hosted_zone_ids) > 0
+    error_message = "Set external_dns_hosted_zone_ids to at least one Route53 hosted zone ID when external_dns_enabled is true."
+  }
+}

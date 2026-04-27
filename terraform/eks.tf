@@ -87,12 +87,12 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    default = {
+    controllers = {
       instance_types           = ["t3.small"]
       force_update_version     = true
       release_version          = var.ami_release_version
       use_name_prefix          = false
-      iam_role_name            = "${var.cluster_name}-ng-default"
+      iam_role_name            = "${var.cluster_name}-ng-controllers"
       iam_role_use_name_prefix = false
 
       min_size     = 2
@@ -104,7 +104,55 @@ module "eks" {
       }
 
       labels = {
-        workshop-default = "yes"
+        workload-group = "controllers"
+        workload-tier  = "platform"
+        workshop-size  = "small"
+      }
+    }
+
+    backend-apis = {
+      instance_types           = ["t3.small"]
+      force_update_version     = true
+      release_version          = var.ami_release_version
+      use_name_prefix          = false
+      iam_role_name            = "${var.cluster_name}-ng-backend-apis"
+      iam_role_use_name_prefix = false
+
+      min_size     = 1
+      max_size     = 6
+      desired_size = 1
+
+      update_config = {
+        max_unavailable_percentage = 50
+      }
+
+      labels = {
+        workload-group = "backend-apis"
+        workload-tier  = "application"
+        workshop-size  = "small"
+      }
+    }
+
+    stateless-noncritical = {
+      instance_types           = ["t3.small"]
+      force_update_version     = true
+      release_version          = var.ami_release_version
+      use_name_prefix          = false
+      iam_role_name            = "${var.cluster_name}-ng-stateless-noncritical"
+      iam_role_use_name_prefix = false
+
+      min_size     = 1
+      max_size     = 6
+      desired_size = 1
+
+      update_config = {
+        max_unavailable_percentage = 50
+      }
+
+      labels = {
+        workload-group = "stateless-noncritical"
+        workload-tier  = "application"
+        workshop-size  = "small"
       }
     }
   }
