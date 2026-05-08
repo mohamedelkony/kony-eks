@@ -4,14 +4,14 @@ metadata:
   name: ui
   namespace: ui
   annotations:
-    external-dns.alpha.kubernetes.io/hostname: ui.retailstore.com
+    external-dns.alpha.kubernetes.io/hostname: ui.mohamedelkony.link
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /actuator/health/liveness
 spec:
   ingressClassName: alb
   rules:
-    - host: ui.retailstore.com
+    - host: ui.mohamedelkony.link
       http:
         paths:
           - path: /
