@@ -7,6 +7,8 @@
 
 # Terraform plan files
 *.tfplan
+tfplan
+plan.json
 
 # Terraform variable files (may contain secrets)
 *.tfvars
@@ -24,6 +26,9 @@ override.tf.json
 # Terraform CLI config files
 .terraformrc
 terraform.rc
+
+# Local scratch outputs
+terraform/d
 
 # Recommended to commit when working in a team or CI
 # .terraform.lock.hcl
