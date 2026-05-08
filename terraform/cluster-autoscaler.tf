@@ -4,21 +4,17 @@ locals {
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
   }
 
-  cluster_autoscaler_managed_node_group_asg_names = {
-    controllers           = module.eks.eks_managed_node_groups["controllers"].node_group_autoscaling_group_names[0]
-    backend-apis          = module.eks.eks_managed_node_groups["backend-apis"].node_group_autoscaling_group_names[0]
-    stateless-noncritical = module.eks.eks_managed_node_groups["stateless-noncritical"].node_group_autoscaling_group_names[0]
-  }
-
   cluster_autoscaler_managed_node_group_asg_tags = merge([
-    for node_group_name, asg_name in local.cluster_autoscaler_managed_node_group_asg_names : {
-      for tag_key, tag_value in local.cluster_autoscaler_asg_tags :
-      "${node_group_name}/${tag_key}" => {
-        autoscaling_group_name = asg_name
-        key                    = tag_key
-        value                  = tag_value
+    for node_group_name, node_group in module.eks.eks_managed_node_groups : merge([
+      for asg_name in node_group.node_group_autoscaling_group_names : {
+        for tag_key, tag_value in local.cluster_autoscaler_asg_tags :
+        "${node_group_name}/${asg_name}/${tag_key}" => {
+          autoscaling_group_name = asg_name
+          key                    = tag_key
+          value                  = tag_value
+        }
       }
-    }
+    ]...)
   ]...)
 }
 
