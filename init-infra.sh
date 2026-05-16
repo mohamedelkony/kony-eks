@@ -1,18 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-cd terraform
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/infra-common.sh"
+set_tf_vars false
+
+cd "${TF_DIR}"
 terraform init
 
-CLUSTER_NAME="${CLUSTER_NAME:-elkony-cluster}"
-EXTERNAL_DNS_ENABLED="${EXTERNAL_DNS_ENABLED:-true}"
-EXTERNAL_DNS_HOSTED_ZONE_ID="${EXTERNAL_DNS_HOSTED_ZONE_ID:-Z08854981YJMPOX3Z1L}"
+terraform plan "${TF_VARS[@]}"
 
-terraform apply \
-  -var="cluster_name=${CLUSTER_NAME}" \
-  -var="external_dns_enabled=${EXTERNAL_DNS_ENABLED}" \
-  -var="external_dns_hosted_zone_ids=[\"${EXTERNAL_DNS_HOSTED_ZONE_ID}\"]" \
-  -auto-approve
+echo "Plan completed successfully. Applying changes..."
+
+terraform apply "${TF_VARS[@]}" -auto-approve
+
+echo "Infrastructure applied successfully."
 
 aws eks \
   update-kubeconfig \
@@ -20,4 +21,6 @@ aws eks \
 
 echo "Kubeconfig updated successfully."
 
-kubectl apply -k ./manifests/base-application
+kubectl apply -k "${ROOT_DIR}/manifests/base-application"
+
+echo "Base application manifests applied successfully."

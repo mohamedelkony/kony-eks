@@ -5,16 +5,14 @@ locals {
   }
 
   cluster_autoscaler_managed_node_group_asg_tags = merge([
-    for node_group_name, node_group in module.eks.eks_managed_node_groups : merge([
-      for asg_name in node_group.node_group_autoscaling_group_names : {
-        for tag_key, tag_value in local.cluster_autoscaler_asg_tags :
-        "${node_group_name}/${asg_name}/${tag_key}" => {
-          autoscaling_group_name = asg_name
-          key                    = tag_key
-          value                  = tag_value
-        }
+    for node_group_name in keys(local.eks_managed_node_groups) : {
+      for tag_key, tag_value in local.cluster_autoscaler_asg_tags :
+      "${node_group_name}/${tag_key}" => {
+        autoscaling_group_name = module.eks.eks_managed_node_groups[node_group_name].node_group_autoscaling_group_names[0]
+        key                    = tag_key
+        value                  = tag_value
       }
-    ]...)
+    }
   ]...)
 }
 
@@ -139,6 +137,7 @@ resource "helm_release" "cluster_autoscaler" {
   namespace  = var.cluster_autoscaler_namespace
 
   values = [yamlencode({
+    replicaCount  = var.cluster_paused ? 0 : 1
     cloudProvider = "aws"
     awsRegion     = data.aws_region.current.name
     autoDiscovery = {
