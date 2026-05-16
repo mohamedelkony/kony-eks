@@ -16,6 +16,12 @@ variable "ami_release_version" {
   default     = "1.33.0-20250704"
 }
 
+variable "cluster_paused" {
+  description = "Scale managed node groups and Cluster Autoscaler down to zero"
+  type        = bool
+  default     = false
+}
+
 variable "vpc_cidr" {
   description = "Defines the CIDR block used on Amazon VPC created for Amazon EKS."
   type        = string
@@ -74,6 +80,30 @@ variable "cluster_autoscaler_image_tag" {
   description = "Container image tag for Cluster Autoscaler"
   type        = string
   default     = "v1.33.3"
+}
+
+variable "metrics_server_namespace" {
+  description = "Namespace for Metrics Server"
+  type        = string
+  default     = "kube-system"
+}
+
+variable "metrics_server_service_account_name" {
+  description = "Service account name for Metrics Server"
+  type        = string
+  default     = "metrics-server"
+}
+
+variable "metrics_server_chart_version" {
+  description = "Helm chart version for Metrics Server"
+  type        = string
+  default     = "3.13.0"
+}
+
+variable "metrics_server_image_tag" {
+  description = "Container image tag for Metrics Server"
+  type        = string
+  default     = "v0.8.0"
 }
 
 variable "external_dns_enabled" {

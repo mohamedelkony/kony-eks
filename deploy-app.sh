@@ -1,7 +1,6 @@
-kubectl apply -k ./manifests/base-application
+#!/bin/bash
+set -euo pipefail
 
-helm repo add prometheus-community \
-https://prometheus-community.github.io/helm-charts
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/infra-common.sh"
 
-helm install monitoring \
-prometheus-community/kube-prometheus-stack
+kubectl apply -k "${ROOT_DIR}/manifests/base-application"

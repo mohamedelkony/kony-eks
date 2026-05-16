@@ -1,6 +1,77 @@
 locals {
   remote_node_cidr = var.remote_network_cidr
   remote_pod_cidr  = var.remote_pod_cidr
+
+  eks_managed_node_groups = {
+    controllers = {
+      instance_types           = ["t3.small"]
+      force_update_version     = true
+      release_version          = var.ami_release_version
+      use_name_prefix          = false
+      iam_role_name            = "${var.cluster_name}-ng-controllers"
+      iam_role_use_name_prefix = false
+
+      min_size     = 0
+      max_size     = 4
+      desired_size = var.cluster_paused ? 0 : 2
+
+      update_config = {
+        max_unavailable_percentage = 50
+      }
+
+      labels = {
+        workload-group = "controllers"
+        workload-tier  = "platform"
+        workshop-size  = "small"
+      }
+    }
+
+    backend-apis = {
+      instance_types           = ["t3.small"]
+      force_update_version     = true
+      release_version          = var.ami_release_version
+      use_name_prefix          = false
+      iam_role_name            = "${var.cluster_name}-ng-backend-apis"
+      iam_role_use_name_prefix = false
+
+      min_size     = 0
+      max_size     = 4
+      desired_size = var.cluster_paused ? 0 : 2
+
+      update_config = {
+        max_unavailable_percentage = 50
+      }
+
+      labels = {
+        workload-group = "backend-apis"
+        workload-tier  = "application"
+        workshop-size  = "small"
+      }
+    }
+
+    stateless-noncritical = {
+      instance_types           = ["t3.small"]
+      force_update_version     = true
+      release_version          = var.ami_release_version
+      use_name_prefix          = false
+      iam_role_name            = "${var.cluster_name}-ng-stateless-noncritical"
+      iam_role_use_name_prefix = false
+
+      min_size     = 0
+      max_size     = 4
+      desired_size = var.cluster_paused ? 0 : 1
+
+      update_config = {
+        max_unavailable_percentage = 50
+      }
+
+      labels = {
+        workload-group = "stateless-noncritical"
+        workload-tier  = "application"
+        workshop-size  = "small"
+      }
+    }
+  }
 }
 
 module "eks" {
@@ -86,76 +157,7 @@ module "eks" {
     }
   }
 
-  eks_managed_node_groups = {
-    controllers = {
-      instance_types           = ["t3.small"]
-      force_update_version     = true
-      release_version          = var.ami_release_version
-      use_name_prefix          = false
-      iam_role_name            = "${var.cluster_name}-ng-controllers"
-      iam_role_use_name_prefix = false
-
-      min_size     = 2
-      max_size     = 4
-      desired_size = 2
-
-      update_config = {
-        max_unavailable_percentage = 50
-      }
-
-      labels = {
-        workload-group = "controllers"
-        workload-tier  = "platform"
-        workshop-size  = "small"
-      }
-    }
-
-    backend-apis = {
-      instance_types           = ["t3.small"]
-      force_update_version     = true
-      release_version          = var.ami_release_version
-      use_name_prefix          = false
-      iam_role_name            = "${var.cluster_name}-ng-backend-apis"
-      iam_role_use_name_prefix = false
-
-      min_size     = 1
-      max_size     = 6
-      desired_size = 1
-
-      update_config = {
-        max_unavailable_percentage = 50
-      }
-
-      labels = {
-        workload-group = "backend-apis"
-        workload-tier  = "application"
-        workshop-size  = "small"
-      }
-    }
-
-    stateless-noncritical = {
-      instance_types           = ["t3.small"]
-      force_update_version     = true
-      release_version          = var.ami_release_version
-      use_name_prefix          = false
-      iam_role_name            = "${var.cluster_name}-ng-stateless-noncritical"
-      iam_role_use_name_prefix = false
-
-      min_size     = 1
-      max_size     = 6
-      desired_size = 1
-
-      update_config = {
-        max_unavailable_percentage = 50
-      }
-
-      labels = {
-        workload-group = "stateless-noncritical"
-        workload-tier  = "application"
-        workshop-size  = "small"
-      }
-    }
-  }
+  eks_managed_node_groups = local.eks_managed_node_groups
 
   tags = merge(local.tags, {
     "karpenter.sh/discovery" = var.cluster_name
