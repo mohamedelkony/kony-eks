@@ -2,7 +2,7 @@
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/infra-common.sh"
-set_tf_vars false
+set_tf_vars
 
 cd "${TF_DIR}"
 terraform init

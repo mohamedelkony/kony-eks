@@ -137,7 +137,6 @@ resource "helm_release" "cluster_autoscaler" {
   namespace  = var.cluster_autoscaler_namespace
 
   values = [yamlencode({
-    replicaCount  = var.cluster_paused ? 0 : 1
     cloudProvider = "aws"
     awsRegion     = data.aws_region.current.name
     autoDiscovery = {

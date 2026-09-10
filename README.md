@@ -28,11 +28,9 @@ Creates or updates the Terraform infrastructure, updates kubeconfig, then applie
 ./init-infra.sh
 ```
 
-It always applies Terraform with `cluster_paused=false`.
-
 ### `pause-infra.sh`
 
-Scales managed node groups and Cluster Autoscaler down or back up through Terraform.
+Scales managed node groups and Cluster Autoscaler down or back up.
 
 ```bash
 ./pause-infra.sh pause
@@ -40,6 +38,7 @@ Scales managed node groups and Cluster Autoscaler down or back up through Terraf
 ```
 
 No argument means `pause`.
+The script scales the Cluster Autoscaler deployment and calls AWS EKS directly to change managed node group desired sizes because the EKS Terraform module ignores `desired_size` changes after node group creation.
 
 ### `deploy-app.sh`
 

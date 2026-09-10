@@ -13,7 +13,7 @@ locals {
 
       min_size     = 0
       max_size     = 4
-      desired_size = var.cluster_paused ? 0 : 2
+      desired_size = 1
 
       update_config = {
         max_unavailable_percentage = 50
@@ -36,7 +36,7 @@ locals {
 
       min_size     = 0
       max_size     = 4
-      desired_size = var.cluster_paused ? 0 : 2
+      desired_size = 1
 
       update_config = {
         max_unavailable_percentage = 50
@@ -59,7 +59,7 @@ locals {
 
       min_size     = 0
       max_size     = 4
-      desired_size = var.cluster_paused ? 0 : 1
+      desired_size = 1
 
       update_config = {
         max_unavailable_percentage = 50
