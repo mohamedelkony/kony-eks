@@ -16,12 +16,6 @@ variable "ami_release_version" {
   default     = "1.33.0-20250704"
 }
 
-variable "cluster_paused" {
-  description = "Scale managed node groups and Cluster Autoscaler down to zero"
-  type        = bool
-  default     = false
-}
-
 variable "vpc_cidr" {
   description = "Defines the CIDR block used on Amazon VPC created for Amazon EKS."
   type        = string

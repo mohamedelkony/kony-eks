@@ -8,11 +8,8 @@ EXTERNAL_DNS_ENABLED="${EXTERNAL_DNS_ENABLED:-true}"
 EXTERNAL_DNS_HOSTED_ZONE_ID="${EXTERNAL_DNS_HOSTED_ZONE_ID:-Z08854981YJMPOX3Z1L}"
 
 set_tf_vars() {
-  local cluster_paused="$1"
-
   TF_VARS=(
     -var="cluster_name=${CLUSTER_NAME}"
-    -var="cluster_paused=${cluster_paused}"
     -var="external_dns_enabled=${EXTERNAL_DNS_ENABLED}"
     -var="external_dns_hosted_zone_ids=[\"${EXTERNAL_DNS_HOSTED_ZONE_ID}\"]"
   )

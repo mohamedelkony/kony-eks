@@ -20,14 +20,20 @@ fi
 
 cd "${TF_DIR}"
 
-cluster_name="${TF_VAR_cluster_name:-}"
+cluster_name="${CLUSTER_NAME:-${TF_VAR_cluster_name:-}}"
 if [[ -z "${cluster_name}" ]]; then
-  cluster_name="$(terraform state show module.eks.aws_eks_cluster.this[0] 2>/dev/null | awk -F' = ' '/^    name = / { gsub(/"/, "", $2); print $2; exit }')"
+  cluster_name="$(terraform state show module.eks.aws_eks_cluster.this[0] 2>/dev/null | awk -F' = ' '/^[[:space:]]+name[[:space:]]+= / { gsub(/"/, "", $2); print $2; exit }')"
 fi
 if [[ -z "${cluster_name}" ]]; then
-  cluster_name="eks-workshop"
+  cluster_name="elkony-cluster"
 fi
 log "Cluster name: ${cluster_name}"
+
+terraform_destroy() {
+  terraform destroy \
+    -var="cluster_name=${cluster_name}" \
+    --auto-approve
+}
 
 # Capture Terraform-managed EIPs before destroy for post-cleanup checks.
 declare -a tf_eips=()
@@ -56,14 +62,16 @@ else
 fi
 
 # First attempt: normal destroy.
-if ! terraform destroy --auto-approve; then
+if ! terraform_destroy; then
   log "Destroy failed. Removing Kubernetes/Helm resources from state and retrying."
   terraform state rm \
+    kubernetes_service_account_v1.cluster_autoscaler \
+    helm_release.cluster_autoscaler \
     kubernetes_service_account_v1.aws_load_balancer_controller \
     helm_release.aws_load_balancer_controller \
     'kubernetes_service_account_v1.external_dns[0]' \
     'helm_release.external_dns[0]' >/dev/null 2>&1 || true
-  terraform destroy --auto-approve
+  terraform_destroy
 fi
 
 AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-$(aws configure get region 2>/dev/null || true)}}"
