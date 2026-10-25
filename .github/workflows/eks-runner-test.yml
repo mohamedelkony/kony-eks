@@ -1,0 +1,20 @@
+name: EKS Self-Hosted Runner Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: eks-runners
+
+    steps:
+      - name: Inspect runner environment
+        run: |
+          echo "Hello from EKS!"
+          echo "Runner: $RUNNER_NAME"
+          uname -a
+
+      - name: Print Kubernetes job context
+        run: |
+          echo "This job is running on a self-hosted runner."
+          echo "GitHub Actions is coordinating the workflow."
