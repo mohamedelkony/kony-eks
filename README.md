@@ -1,5 +1,5 @@
 # kony-eks scripts
-
+sds
 Small helper scripts for creating, pausing, resuming, deploying to, and destroying the EKS workshop cluster.
 
 ## Configuration
