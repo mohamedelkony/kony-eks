@@ -1,0 +1,28 @@
+
+name: EKS CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: eks-runners
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          echo "Building project..."
+          cat README.md
+
+      - name: Test
+        run: |
+          echo "Running tests..."
+          cat TOOLS.md
