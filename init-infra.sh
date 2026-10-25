@@ -19,6 +19,7 @@ aws eks \
   update-kubeconfig \
   --name "$CLUSTER_NAME"
 
-echo "Kubeconfig updated successfully."
+echo "Kubeconfig updated successfully, current context:"
+kubectl config current-context
 
 "${ROOT_DIR}/bootstrap-flux.sh"
