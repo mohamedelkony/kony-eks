@@ -22,11 +22,23 @@ CLUSTER_NAME=my-cluster ./init-infra.sh
 
 ### `init-infra.sh`
 
-Creates or updates the Terraform infrastructure, updates kubeconfig, then applies the base application manifests.
+Creates or updates the Terraform infrastructure, updates kubeconfig, and invokes `bootstrap-flux.sh`.
 
 ```bash
 ./init-infra.sh
 ```
+
+### `bootstrap-flux.sh`
+
+Updates kubeconfig, checks Flux prerequisites, and bootstraps or reconciles Flux. On a new cluster, it reads the GitHub token from `~/.netrc` unless `GITHUB_TOKEN` is already set.
+
+`init-infra.sh` invokes this automatically. Run it directly when you only need to bootstrap or reconcile Flux:
+
+```bash
+./bootstrap-flux.sh
+```
+
+Flux then applies changes from `manifests/base-application` after they are pushed to GitHub.
 
 ### `pause-infra.sh`
 

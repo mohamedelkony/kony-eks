@@ -22,7 +22,9 @@ cd "${TF_DIR}"
 
 cluster_name="${CLUSTER_NAME:-${TF_VAR_cluster_name:-}}"
 if [[ -z "${cluster_name}" ]]; then
-  cluster_name="$(terraform state show module.eks.aws_eks_cluster.this[0] 2>/dev/null | awk -F' = ' '/^[[:space:]]+name[[:space:]]+= / { gsub(/"/, "", $2); print $2; exit }')"
+  if ! cluster_name="$(terraform state show module.eks.aws_eks_cluster.this[0] 2>/dev/null | awk -F' = ' '/^[[:space:]]+name[[:space:]]+= / { gsub(/"/, "", $2); print $2; exit }')"; then
+    cluster_name=""
+  fi
 fi
 if [[ -z "${cluster_name}" ]]; then
   cluster_name="elkony-cluster"
@@ -42,7 +44,7 @@ while IFS= read -r addr; do
   if [[ -n "${alloc_id}" ]]; then
     tf_eips+=("${alloc_id}")
   fi
-done < <(terraform state list 2>/dev/null | rg '(^|\\.)aws_eip\\.' || true)
+done < <(terraform state list 2>/dev/null | grep -E '(^|\.)aws_eip\.' || true)
 
 # Best-effort Kubernetes cleanup to let AWS load balancers/EIPs drain before cluster teardown.
 if command -v kubectl >/dev/null 2>&1 && kubectl version --request-timeout=5s >/dev/null 2>&1; then
